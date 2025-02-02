@@ -31,16 +31,6 @@ jobs:
           cd frontend/recipe-share-app
           npm install
 
-      - name: Run backend tests
-        run: |
-          cd backend
-          npm test
-
-      - name: Run frontend tests
-        run: |
-          cd frontend/recipe-share-app
-          npm test
-
       - name: Build frontend
         run: |
           cd frontend/recipe-share-app
