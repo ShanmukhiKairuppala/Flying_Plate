@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import foodRecipe from '../assets/food_photo.jpg'
+import foodRecipe from '../assets/Food_photo.jpg'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import RecipeItems from '../components/RecipeItems'
