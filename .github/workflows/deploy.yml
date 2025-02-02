@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies (Frontend)
         run: |
-          cd frontend/react-share-app
+          cd frontend/recipe-share-app
           npm install
 
       - name: Run backend tests
@@ -38,10 +38,10 @@ jobs:
 
       - name: Run frontend tests
         run: |
-          cd frontend/react-share-app
+          cd frontend/recipe-share-app
           npm test
 
       - name: Build frontend
         run: |
-          cd frontend/react-share-app
+          cd frontend/recipe-share-app
           npm run build
