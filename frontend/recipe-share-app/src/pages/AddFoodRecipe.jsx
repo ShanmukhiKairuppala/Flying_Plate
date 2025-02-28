@@ -11,6 +11,10 @@ export default function AddFoodRecipe() {
     }
     const onHandleSubmit = async (e) => {
         e.preventDefault()
+        if (recipeData.time === "0 min" || recipeData.time === "0" || !recipeData.time) {
+        alert("Time must be greater than 0 minutes.");
+        return;
+    }
         console.log(recipeData)
         await axios.post("http://localhost:5000/recipe", recipeData,{
             headers:{
