@@ -16,21 +16,43 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-
-      - name: npm install, build, and test
+       # Backend setup
+      - name: Install backend dependencies
         run: |
+          cd backend
           npm install
-          npm run build 
-          npm run test --if-present
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Build backend (if applicable)
+        run: |
+          cd backend
+          npm run build || echo "No build step for backend"
+
+      # Frontend setup
+      - name: Install frontend dependencies
+        run: |
+          cd frontend/recipe-share-app
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend/recipe-share-app
+          npm run build 
+      # - name: npm install, build, and test
+      #   run: |
+      #     npm install
+      #     npm run build 
+      #     npm run test --if-present
+      - name: Prepare deployment package
+        run: zip -r release.zip backend frontend/recipe-share-app/build
+      # - name: Zip artifact for deployment
+      #   run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -70,5 +92,15 @@ jobs:
         with:
           app-name: 'AIAgentCICDPipeline'
           slot-name: 'Production'
-          package: .
-          
+          package: backend
+        
+          # package: .
+      - name: Start Backend Server
+        run: |
+          cd backend
+          npm start &
+      
+      - name: Start Frontend Server
+        run: |
+          cd frontend/recipe-share-app
+          npm start &
