@@ -1,5 +1,5 @@
 const User = require("../models/user")
-const bcrypt = require("bcrypt")
+const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken")
 
 const userSignUp = async (req, res) => {
@@ -11,7 +11,7 @@ const userSignUp = async (req, res) => {
     if (user) {
         return res.status(400).json({ error: "Email is already exist" })
     }
-    const hashPwd = await bcrypt.hash(password, 10)
+    const hashPwd = await bcryptjs.hash(password, 10)
     const newUser = await User.create({
         email, password: hashPwd
     })
@@ -26,7 +26,7 @@ const userLogin = async (req, res) => {
         return res.status(400).json({ message: "Email and password is required" })
     }
     let user = await User.findOne({ email })
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (user && await bcryptjs.compare(password, user.password)) {
         let token = jwt.sign({ email, id: user._id }, process.env.SECRET_KEY)
         return res.status(200).json({ token, user })
     }
