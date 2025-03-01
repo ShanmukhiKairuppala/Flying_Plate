@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+            
+      - name: Debug:List files
+        run: ls -R
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -50,9 +53,9 @@ jobs:
       #     npm run build 
       #     npm run test --if-present
       - name: Prepare deployment package
-        run: zip -r release.zip backend frontend/recipe-share-app/build
+        # run: zip -r release.zip backend frontend/recipe-share-app/build
       # - name: Zip artifact for deployment
-      #   run: zip release.zip ./* -r
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -75,6 +78,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
+      - name: Debug:List extracted files
+        run: ls -R
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
@@ -93,6 +98,13 @@ jobs:
           app-name: 'AIAgentCICDPipeline'
           slot-name: 'Production'
           package: backend
+
+      - name: Deploy Frontend
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'AIAgentCICDPipeline'
+          slot-name: 'Production'
+          package: frontend/recipe-share-app/dist
         
           # package: .
       - name: Start Backend Server
