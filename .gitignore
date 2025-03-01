@@ -2,7 +2,7 @@
 
 frontend/recipe-share-app/.env
 
-backend/ .env
+backend/.env
 
 
 # Logs
