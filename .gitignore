@@ -1,0 +1,22 @@
+.env
+
+frontend/recipe-share-app/.env
+
+backend/ .env
+
+
+# Logs
+frontend/recipe-share-app/logs
+frontend/recipe-share-app/*.log
+frontend/recipe-share-app/npm-debug.log*
+frontend/recipe-share-app/yarn-debug.log*
+frontend/recipe-share-app/yarn-error.log*
+frontend/recipe-share-app/pnpm-debug.log*
+frontend/recipe-share-app/lerna-debug.log*
+
+frontend/recipe-share-app/node_modules
+frontend/recipe-share-app/dist
+frontend/recipe-share-app/dist-ssr
+frontend/recipe-share-app/*.local
+
+backend/node_modules
