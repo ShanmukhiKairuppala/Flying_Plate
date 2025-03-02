@@ -13,9 +13,10 @@ jobs:
       contents: read # Required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
@@ -25,10 +26,6 @@ jobs:
         run: |
           cd backend
           npm install
-      - name: Build backend
-        run: |
-          cd backend
-          npm run build || echo "No build step for backend"
 
       # Frontend setup
       - name: Install frontend dependencies
@@ -54,8 +51,8 @@ jobs:
       # Zip and Upload Frontend Artifact
       - name: Zip frontend for deployment
         run: |
-          cd frontend/recipe-share-app/dist
-          zip -r ../../../frontend-artifact.zip .
+          cd frontend/recipe-share-app
+          zip -r ../../frontend-artifact.zip dist
       - name: Upload frontend artifact
         uses: actions/upload-artifact@v4
         with:
@@ -78,14 +75,18 @@ jobs:
         with:
           name: backend-artifact
       - name: Unzip backend artifact
-        run: unzip backend-artifact.zip -d backend
+        run: |
+          mkdir -p backend
+          unzip backend-artifact.zip -d backend
 
       - name: Download frontend artifact
         uses: actions/download-artifact@v4
         with:
           name: frontend-artifact
       - name: Unzip frontend artifact
-        run: unzip frontend-artifact.zip -d frontend/recipe-share-app/dist
+        run: |
+          mkdir -p frontend/recipe-share-app/dist
+          unzip frontend-artifact.zip -d frontend/recipe-share-app/dist
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -95,7 +96,7 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB9224BF3DA743278BA2F47E552830AB }}
 
       - name: Deploy Backend to Azure Web App
-        id: deploy-to-webapp
+        id: deploy-backend
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'RecipeApp'
@@ -103,6 +104,7 @@ jobs:
           package: backend
 
       - name: Deploy Frontend to Azure Web App
+        id: deploy-frontend
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'RecipeApp'
