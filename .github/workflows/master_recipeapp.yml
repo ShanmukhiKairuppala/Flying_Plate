@@ -109,5 +109,5 @@ jobs:
           slot-name: 'Production'
           package: frontend/recipe-share-app/dist
 
-      - name: Debug: List deployed files
+      - name: Debug:List deployed files
         run: ls -R /home/site/wwwroot/
