@@ -63,6 +63,9 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write # Required for JWT
+      contents: read # Required for actions/checkout
 
     steps:
       - name: Download backend artifact
