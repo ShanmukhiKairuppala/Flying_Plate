@@ -71,13 +71,13 @@ jobs:
           name: backend-app
           path: deployment_package
 
-      # 🔹 **Login to Azure** (Required for deployment)
+      #  **Login to Azure** (Required for deployment)
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5E0603940A7640E49372B8E3CE9D3C89 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1B2241093D674B73B37A6C0B311ECD1D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB9224BF3DA743278BA2F47E552830AB }}
 
       # Deploy Backend to Azure Web App
       - name: Deploy Backend to Azure Web App
