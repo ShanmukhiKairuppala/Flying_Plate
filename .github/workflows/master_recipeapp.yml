@@ -1,4 +1,4 @@
-name: Build and Deploy Flying Plate App to Azure
+name: Build and deploy Node.js app to Azure Web App - RecipeApp
 
 on:
   push:
@@ -10,108 +10,104 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read # Required for actions/checkout
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-
-      # Backend Setup
-      - name: Install Backend Dependencies
+    
+      # Backend setup
+      - name: Install backend dependencies
         run: |
           cd backend
           npm install
-      
-      - name: Build Backend (Skip if not needed)
+      - name: Build backend
         run: |
           cd backend
           npm run build || echo "No build step for backend"
 
-      # Frontend Setup
-      - name: Install Frontend Dependencies
+      # Frontend setup
+      - name: Install frontend dependencies
         run: |
           cd frontend/recipe-share-app
           npm install
-
-      - name: Build Frontend
+      - name: Build frontend
         run: |
           cd frontend/recipe-share-app
-          npm run build
+          npm run build 
 
-      # Archive backend
-      - name: Archive Backend for Deployment
+      # Zip and Upload Backend Artifact
+      - name: Zip backend for deployment
         run: |
           cd backend
-          zip -r ../backend.zip . -x "node_modules/*"
+          zip -r ../backend-artifact.zip .
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-artifact
+          path: backend-artifact.zip
 
-      # Archive frontend
-      - name: Archive Frontend for Deployment
+      # Zip and Upload Frontend Artifact
+      - name: Zip frontend for deployment
         run: |
           cd frontend/recipe-share-app/dist
-          zip -r ../../frontend.zip .
-
-      - name: Upload Backend Artifact
+          zip -r ../../../frontend-artifact.zip .
+      - name: Upload frontend artifact
         uses: actions/upload-artifact@v4
         with:
-          name: backend
-          path: backend.zip
-
-      - name: Upload Frontend Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend
-          path: frontend.zip
+          name: frontend-artifact
+          path: frontend-artifact.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-backend.outputs.webapp-url }}
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write # Required for JWT
+      contents: read # Required for actions/checkout
 
     steps:
-      - name: Download Backend Artifact
+      - name: Download backend artifact
         uses: actions/download-artifact@v4
         with:
-          name: backend
+          name: backend-artifact
+      - name: Unzip backend artifact
+        run: unzip backend-artifact.zip -d backend
 
-      - name: Download Frontend Artifact
+      - name: Download frontend artifact
         uses: actions/download-artifact@v4
         with:
-          name: frontend
-
-      - name: Unzip Backend
-        run: unzip backend.zip -d backend
-
-      - name: Unzip Frontend
-        run: unzip frontend.zip -d frontend
+          name: frontend-artifact
+      - name: Unzip frontend artifact
+        run: unzip frontend-artifact.zip -d frontend/recipe-share-app/dist
 
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5E0603940A7640E49372B8E3CE9D3C89 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1B2241093D674B73B37A6C0B311ECD1D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB9224BF3DA743278BA2F47E552830AB }}
 
-      - name: Deploy Backend to Azure
-        id: deploy-backend
+      - name: Deploy Backend to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'RecipeApp'
           slot-name: 'Production'
           package: backend
 
-      - name: Deploy Frontend to Azure
+      - name: Deploy Frontend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'RecipeApp'
           slot-name: 'Production'
-          package: frontend
+          package: frontend/recipe-share-app/dist
 
-      - name: Debug Deployment
+      - name: Debug: List deployed files
         run: ls -R /home/site/wwwroot/
