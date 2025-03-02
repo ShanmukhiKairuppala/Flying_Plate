@@ -89,5 +89,24 @@ jobs:
         with:
           app-name: 'RecipeApp'
           slot-name: 'Production'
-          package: .
+          # package: .
+          package: backend
+
+      - name: Deploy Frontend
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'RecipeApp'
+          slot-name: 'Production'
+          package: frontend/recipe-share-app/dist
+
+      - name: Start Backend Server
+        run: |
+          cd backend
+          npm start &
+      
+      - name: Start Frontend Server
+        run: |
+          cd frontend/recipe-share-app
+          npm start &
+
           
