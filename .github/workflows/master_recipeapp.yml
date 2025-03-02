@@ -27,7 +27,7 @@ jobs:
           cd backend
           npm install
 
-      - name: Build backend (if applicable)
+      - name: Build backend 
         run: |
           cd backend
           npm run build || echo "No build step for backend"
@@ -83,14 +83,14 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1B2241093D674B73B37A6C0B311ECD1D }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB9224BF3DA743278BA2F47E552830AB }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: 'Deploy Backend to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'RecipeApp'
           slot-name: 'Production'
-          # package: .
-          package: backend
+          package: .
+          # package: backend
 
       - name: Deploy Frontend
         uses: azure/webapps-deploy@v3
@@ -98,15 +98,18 @@ jobs:
           app-name: 'RecipeApp'
           slot-name: 'Production'
           package: frontend/recipe-share-app/dist
+          
+      - name: Debug:List deployed files
+        run: ls -R /home/site/wwwroot/
 
-      - name: Start Backend Server
-        run: |
-          cd backend
-          npm start &
+      # - name: Start Backend Server
+      #   run: |
+      #     cd backend
+      #     npm start &
       
-      - name: Start Frontend Server
-        run: |
-          cd frontend/recipe-share-app
-          npm start &
+      # - name: Start Frontend Server
+      #   run: |
+      #     cd frontend/recipe-share-app
+      #     npm start &
 
           
