@@ -16,7 +16,7 @@ export default function AddFoodRecipe() {
         return;
     }
         console.log(recipeData)
-        await axios.post("http://localhost:5000/recipe", recipeData,{
+        await axios.post("https://flyingplateapp-fcdfbffpcad6bwh4.canadacentral-01.azurewebsites.net/recipe", recipeData,{
             headers:{
                 'Content-Type':'multipart/form-data',
                 'authorization':'bearer '+localStorage.getItem("token")
